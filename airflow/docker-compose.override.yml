@@ -1,0 +1,32 @@
+services:
+  analytics-postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: ny_taxi
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-analytics-data:/var/lib/postgresql/data
+    networks:
+      - airflow_7f9ecc_airflow  # attach to Airflow network
+  
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8081:80"
+    depends_on:
+      - analytics-postgres
+    networks:
+      - airflow_7f9ecc_airflow  # attach to Airflow network
+
+volumes:
+  postgres-analytics-data:
+
+networks:
+  airflow_7f9ecc_airflow:
+    external: true  # use the network created by Astro
